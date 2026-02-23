@@ -119,7 +119,7 @@ class Engine:
             self (Engine): Instance of Engine Object.
             dt (float): The time elapsed since last call."""
         if self.current_scene is not None:
-            self.current_scene.update(dt)
+            self.current_scene._update(dt)
 
     def render(self):
         """Call the Scene render method. Should never be called outside the event loop.
@@ -128,7 +128,7 @@ class Engine:
             self (Engine): Instance of Engine Object."""
         self.window.fill((0, 0, 0))
         if self.current_scene is not None:
-            self.current_scene.render(self.window)
+            self.current_scene._render(self.window)
         pygame.display.flip()
 
     def key_pressed(self, name):

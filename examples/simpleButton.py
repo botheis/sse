@@ -58,6 +58,11 @@ class ButtonScene(Scene):
         # Associate renderers
         background.set_renderer(self.renderers.get("BGRenderer"))
 
+        #
+        # /!\ Background obj is completely useless. Technically there is a method on renderer object to do that: Renderer.fill
+        #
+        # The purpose here is to show there is several possibilities to get the result we want.
+        #
 
         # Add a button Obj
         button = Obj()
