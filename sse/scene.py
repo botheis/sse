@@ -80,7 +80,7 @@ class Scene:
         self.textures = RessourceManager(self._load_texture)
         self.controllers = RessourceManager(self._load_controller)
         self.renderers = RessourceManager(self._load_renderer)
-        self.sounds = RessourceManager(self._load_sounds)
+        self.sounds = RessourceManager(self._load_sound)
         self.entities = []
 
     @staticmethod
