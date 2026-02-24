@@ -80,8 +80,48 @@ class Scene:
         self.textures = RessourceManager(self._load_texture)
         self.controllers = RessourceManager(self._load_controller)
         self.renderers = RessourceManager(self._load_renderer)
+        self.sounds = RessourceManager(self._load_sounds)
         self.entities = []
 
+    @staticmethod
+    def _load_obj(fnc):
+        """Decorator for Scene.load method.
+
+        Args:
+            fnc (method): Refenrence to Scene.load method.
+
+        Returns:
+            method: The load object method decorated."""
+
+        def wrapper(self, *args, **kwargs):
+            """Decorator wrapper for _load_obj decorator. This decorator is launched after the load execution.
+            On each entity, get the dependencies list,
+            extract each known elements, then associate them to the entity.
+
+            Args:
+                self (sse.obj.Obj): Instance of Obj Object.
+                *args (tuple): list of non named given params
+                **kwargs (dict): list of named given params
+            """
+            result = fnc(self, *args, **kwargs)
+            for entity in self.entities:
+                dependencies = entity.get_needs()
+                for cat in dependencies:
+                    for dep in dependencies[cat]:
+                        if cat == "controller":
+                            entity.add_controller(self.controllers.get(dep))
+                        elif cat == "renderer":
+                            entity.set_renderer(self.renderers.get(dep))
+                        elif cat == "font":
+                            entity.property(dep, self.fonts.get(dep))
+                        elif cat == "texture":
+                            entity.property(dep, self.textures.get(dep))
+                        else:
+                            """unknown category"""
+            return result
+        return wrapper
+
+    @_load_obj
     def load(self):
         """NEED TO BE REDEFINED BY CHILDREN. By default only reset the entities list.
 
@@ -135,6 +175,10 @@ class Scene:
             pygame.surface.Surface: Instance of Texture (in sdl2.x) / Surface (in sdl1.x) """
         texture = pygame.image.load(filename)
         return texture
+
+    def _load_sound(self, filename):
+        """TODO: Load a new Sound."""
+        pass
 
     def _update(self, dt):
         """On all entities, launch update method.

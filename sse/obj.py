@@ -238,6 +238,10 @@ class Obj:
         # Store the render used to display the Obj.
         self._renderer = None
 
+        # Store the dependencies list to load the object
+        self._dependencies = {
+        }
+
     def add_stat(self, name:str, min_value:int=0, max_value:int=100, value:int=0) -> bool:
         """Create a new Stat Object and associate it to Obj.
 
@@ -404,7 +408,7 @@ class Obj:
         if name is None or name == "":
             return False
 
-        return self._properties is not None and name in self._properties[name]
+        return self._properties is not None and name in self._properties
 
     def del_property(self, name):
         """Delete a property associated to the given name.
@@ -497,7 +501,6 @@ class Obj:
             return False
         return self._signals[name].disconnect()
 
-
     def update(self, dt):
         """Call the method update method. This method is automatically called by the Scene.
 
@@ -569,3 +572,36 @@ class Obj:
 
         self._renderer = renderer
         return True
+
+
+    def needs(self, category, name):
+        """Add a dependecy to this object.
+
+        Args:
+            self (Obj): Instance of Obj Object.
+            category (str): kind of dependency to add. It can be "controller", "renderer", "font", "texture". None and "" values not allowed.
+            name (str): Unique given name of the dependency (name given in the ressource manageer). None and "" values not allowed.
+        """
+        if self._dependencies == None:
+            self._dependencies = {}
+
+        if category is None or category == "" or name is None or name == "":
+            return
+
+        if category not in self._dependencies:
+            self._dependencies[category] = []
+
+        if name in self._dependencies[category]:
+            return
+
+        self._dependencies[category].append(name)
+
+    def get_needs(self):
+        """Returns the dependencies list
+
+        Args:
+            self (Obj): Instance of Obj Object.
+
+        Returns:
+            dict: the dependencies full list"""
+        return self._dependencies
